@@ -1,0 +1,21 @@
+{
+    "name": "ycstar\/yingketech",
+    "description": "上海盈科SDK",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ycstar",
+            "email": "547098838@qq.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.8",
+        "ext-json": "*",
+        "ext-openssl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ycstar\\Yingketech\\": "src"
+        }
+    }
+}
