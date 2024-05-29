@@ -261,7 +261,7 @@ class Yingke
         return base64_decode(strtr($input, '-_', '+/'));
     }
 
-    private function sign($preSign)
+    public function sign($preSign)
     {
         // 将私钥转换为PEM格式
         $privateKeyPEM = "-----BEGIN PRIVATE KEY-----\n";
@@ -279,7 +279,7 @@ class Yingke
         return $signature;
     }
 
-    private function getMillisecond()
+    public function getMillisecond()
     {
         // 获取当前时间戳（秒和微秒）
         $timestamp = microtime(true);
@@ -287,7 +287,7 @@ class Yingke
         return (int)($timestamp * 1000);
     }
 
-    private function aesEncrypt($data)
+    public function aesEncrypt($data)
     {
         $secretKey = $this->base64UrlDecode($this->decryptKey);
 
