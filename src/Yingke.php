@@ -160,7 +160,8 @@ class Yingke
 
             $uri .= "?appId={$this->appId}&requestId={$requestId}&timeSpan={$milliseconds}&sign={$this->encodeUrlSafeBase64($signature)}";
 
-            $postData = ['data' => $this->aesEncrypt($json)];
+            $encryptData = $this->aesEncrypt($json);
+            $postData = ['data' => $this->encodeUrlSafeBase64($encryptData)];
 
             $response = $this->post($this->host.$uri, $postData, true);
 
