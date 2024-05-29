@@ -2,7 +2,6 @@
 
 namespace Ycstar\Yingketech;
 
-use GuzzleHttp\Client;
 use Ycstar\Yingketech\Exceptions\InvalidResponseException;
 use Ycstar\Yingketech\Exceptions\InvalidArgumentException;
 
@@ -19,8 +18,6 @@ class Yingke
     protected $insaicPublicKey;
 
     protected $decryptKey;
-
-    protected $client;
 
     public function __construct(array $config)
     {
@@ -165,7 +162,7 @@ class Yingke
 
             $postData = ['data' => $this->aesEncrypt($json)];
 
-            $response = $this->getHttpClient()->request($method, $uri, ['json' => $postData])->getBody()->getContents();
+            $response = $this->post($uri, $postData, true);
 
             $result = json_decode($response, true);
 
@@ -297,12 +294,37 @@ class Yingke
         return $encrypted;
     }
 
-    private function getHttpClient()
-    {
-        if(!$this->client){
-            return new Client(['base_uri' => $this->host]);
+    private function post($url, $data, $json, $headers = null) {
+        $ch = curl_init();
+        if(stripos($url,"https://")!==FALSE){
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+            curl_setopt($ch, CURLOPT_SSLVERSION, 1); //CURL_SSLVERSION_TLSv1
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
+            curl_setopt($ch, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
         }
-        return $this->client;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, true);           //POST方式
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        if ($json) {
+            if (!$headers) {
+                $headers = [
+                    'accept: application/json;charset=utf-8',
+                    'Content-Type: application/json;charset=utf-8'
+                ];
+            }
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));    //POST数据
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);                //POST数据
+        }
+
+        $content = curl_exec($ch);
+        curl_close($ch);
+        return $content;
     }
 
 }
