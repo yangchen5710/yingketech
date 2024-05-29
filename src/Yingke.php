@@ -162,7 +162,7 @@ class Yingke
 
             $postData = ['data' => $this->aesEncrypt($json)];
 
-            $response = $this->post($uri, $postData, true);
+            $response = $this->post($this->host.$uri, $postData, true);
 
             $result = json_decode($response, true);
 
